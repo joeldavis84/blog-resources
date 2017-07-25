@@ -1,3 +1,5 @@
+#!/bin/bash
+
   ## Start the FPM manager for PHP  
 php-fpm7.0 &
 
