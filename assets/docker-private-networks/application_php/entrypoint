@@ -1,0 +1,5 @@
+  ## Start the FPM manager for PHP  
+php-fpm7.0 &
+
+  ## Switch to the web server
+exec nginx -g 'daemon off;'
