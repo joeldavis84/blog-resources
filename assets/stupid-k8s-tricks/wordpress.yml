@@ -1,6 +1,16 @@
 ---
 ############
-## This creates the wordpress app and database servers with /var/run/mysqld shared between them so the Unix domain socket can be shared between them.
+## This creates the wordpress app and database servers with /var/run/mysqld shared between them so the Unix domain socket can be shared between them. Doing it as a deployment \
+## probably wasn't necessary or beneficial but it works so I'm leaving it be. You can easily convert below into a pod, though.
+#
+## Advantages: 
+##  * All application dependencies are in one neat pod/deployment
+##  * Applications use an efficient unix domain socket bypassing the overhead of a full TCP socket.
+##
+## Disadvantages:
+##   * Since it's just pointing to a local unix domain socket, the ability to load balance is nil
+##   * Having a pod-local database also fragments the database infrastructure making performance tuning and maintenance difficult.
+##
 ## When installing wordpress use the following values:
 ##
 ##  Host: localhost:/var/run/mysqld/mysqld.sock
