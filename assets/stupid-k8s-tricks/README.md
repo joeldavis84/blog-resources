@@ -1,0 +1,1 @@
+These are just YAML definitions for pods, volumes, etc to do things with Kubernetes that I've defined as being "stupid tricks" which are interesting but ultimately impractical solutions to problems that may or may not be contrived in the first place.
