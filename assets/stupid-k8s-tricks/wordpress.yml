@@ -1,0 +1,77 @@
+---
+############
+## This creates the wordpress app and database servers with /var/run/mysqld shared between them so the Unix domain socket can be shared between them.
+## When installing wordpress use the following values:
+##
+##  Host: localhost:/var/run/mysqld/mysqld.sock
+##  User: wordpress
+##  Password: wordpress
+##  Database: wordpress
+##
+############
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: wordpress
+  labels:
+    app: wordpress
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wordpress
+  template:
+    metadata:
+      labels:
+        app: wordpress
+    spec:
+      volumes:
+      - name: mysqldrun
+        emptyDir: {}
+      containers:
+        - name: wordpress
+          image: wordpress
+          volumeMounts:
+          - mountPath: /var/run/mysqld
+            name: mysqldrun
+          ports:
+          - containerPort: 80
+        - name: mysql
+          image: mysql
+          volumeMounts:
+          - mountPath: /var/run/mysqld
+            name: mysqldrun
+          env:
+          - name: MYSQL_ROOT_PASSWORD
+            value: wordpress
+          - name: MYSQL_DATABASE
+            value: wordpress
+          - name: MYSQL_USER
+            value: wordpress
+          - name: MYSQL_PASSWORD
+            value: wordpress
+          ports:
+          - containerPort: 3306
+---
+############
+## This exposes the app server on NodePort tcp/31000
+############
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: wordpress
+  name: wordpress-frontend
+  namespace: default
+spec:
+  ports:
+  - name: "80"
+    nodePort: 31000
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: wordpress
+  sessionAffinity: None
+  type: NodePort
